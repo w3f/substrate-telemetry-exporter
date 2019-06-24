@@ -1,1 +1,1 @@
-# substrate-telemetry-exporter
+# substrate-exporter
