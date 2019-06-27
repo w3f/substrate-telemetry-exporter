@@ -22,5 +22,9 @@
   "devDependencies": {
     "eslint": "^6.0.1",
     "mocha": "^6.1.4"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "prom-client": "^11.5.3"
   }
 }
