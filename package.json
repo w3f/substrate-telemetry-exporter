@@ -7,16 +7,20 @@
   "author": "Federico Gimenez <federico@web3.foundation>",
   "license": "GPL-3.0",
   "private": false,
-    "scripts": {
+  "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
     "test": "mocha --reporter spec --recursive",
-    "start": "node index.js"
+    "start": "node src/index.js"
   },
   "bin": {
     "substrate-telemetry-exporter": "./index.js"
   },
   "files": [
     "/src"
-  ]
+  ],
+  "devDependencies": {
+    "eslint": "^6.0.1",
+    "mocha": "^6.1.4"
+  }
 }
