@@ -1,0 +1,22 @@
+{
+  "name": "substrate-telemetry-exporter",
+  "version": "0.1.0",
+  "description": "Prometheus exporter for substrate telemetry",
+  "main": "src/index.js",
+  "repository": "git@github.com:w3f/substrate-telemetry-exporter",
+  "author": "Federico Gimenez <federico@web3.foundation>",
+  "license": "GPL-3",
+  "private": false,
+    "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "mocha --reporter spec --recursive",
+    "start": "node index.js"
+  },
+  "bin": {
+    "substrate-telemetry-exporter": "./index.js"
+  },
+  "files": [
+    "/src"
+  ]
+}
