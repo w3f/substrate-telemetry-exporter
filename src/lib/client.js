@@ -1,13 +1,33 @@
 const WebSocket = require('ws');
 
 const address = 'ws://localhost:8080';
+const socket = new WebSocket(address);
+const Actions = {
+  FeedVersion      : 0,
+  BestBlock        : 1,
+  BestFinalized    : 2,
+  AddedNode        : 3,
+  RemovedNode      : 4,
+  LocatedNode      : 5,
+  ImportedBlock    : 6,
+  FinalizedBlock   : 7,
+  NodeStats        : 8,
+  NodeHardware     : 9,
+  TimeSync         : 10,
+  AddedChain       : 11,
+  RemovedChain     : 12,
+  SubscribedTo     : 13,
+  UnsubscribedFrom : 14,
+  Pong             : 15,
+  AfgFinalized         : 16,
+  AfgReceivedPrevote   : 17,
+  AfgReceivedPrecommit : 18,
+  AfgAuthoritySet      : 19
+};
 
 module.exports = {
   start: () => {
-    let subscribed = false;
     return new Promise((resolve, reject) => {
-      const socket = new WebSocket(address);
-
       socket.on('open', () => {
         console.log(`Conected to substrate-telemetry on ${address}`);
         resolve();
@@ -23,14 +43,41 @@ module.exports = {
       });
 
       socket.on('message', (data) => {
-        console.log(data);
-        const parsedData = JSON.parse(data);
-        if (!subscribed) {
-          const chain = parsedData[3][0];
-          socket.send(`subscribe:${chain}`);
-          subscribed = true;
-        }
+        const messages = deserialize(data);
+        messages.forEach((message) => {
+          handle(message);
+        });
       });
     });
+  }
+}
+
+function deserialize(data) {
+  const json = JSON.parse(data);
+
+  const messages = new Array(json.length / 2);
+
+  for (const index of messages.keys()) {
+    const [ action, payload] = json.slice(index * 2);
+
+    messages[index] = { action, payload };
+  }
+  return messages;
+}
+
+function handle(message) {
+  const { action, payload } = message;
+
+  switch(action) {
+  case Actions.AddedChain:
+    const chain = payload[0];
+    socket.send(`subscribe:${chain}`);
+    break;
+  case Actions.BestBlock:
+    console.log('new best block')
+    break;
+  case Actions.BestFinalized:
+    console.log('new finalized block')
+    break;
   }
 }
