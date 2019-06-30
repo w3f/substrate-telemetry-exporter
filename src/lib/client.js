@@ -1,4 +1,9 @@
 const WebSocket = require('ws');
+const { timeToFinality,
+        bestBlock,
+        bestFinalized,
+        blockProductionTime
+      } = require('./prometheus');
 
 const address = 'ws://localhost:8080';
 const socket = new WebSocket(address);
@@ -24,6 +29,7 @@ const Actions = {
   AfgReceivedPrecommit : 18,
   AfgAuthoritySet      : 19
 };
+const state = {};
 
 module.exports = {
   start: () => {
@@ -53,6 +59,7 @@ module.exports = {
 }
 
 function deserialize(data) {
+  console.log(`incoming data: ${data}`)
   const json = JSON.parse(data);
 
   const messages = new Array(json.length / 2);
@@ -72,12 +79,38 @@ function handle(message) {
   case Actions.AddedChain:
     const chain = payload[0];
     socket.send(`subscribe:${chain}`);
+
     break;
+
   case Actions.BestBlock:
-    console.log('new best block')
+    {
+      console.log('new best block')
+
+      const blockNumber = payload[0];
+      bestBlock.set(blockNumber);
+
+      const productionTime = payload[2];
+      blockProductionTime.set(productionTime);
+
+      const timestamp = payload[1];
+      state[blockNumber] = timestamp;
+    }
     break;
+
   case Actions.BestFinalized:
-    console.log('new finalized block')
+    {
+      const currentTimestamp = Date.now();
+      console.log('new finalized block');
+
+      const blockNumber = payload[0];
+      bestFinalized.set(blockNumber);
+
+      const productionTime = state[blockNumber];
+      if (productionTime) {
+        const finalityTime = currentTimestamp - productionTime;
+        timeToFinality.observe(finalityTime);
+      }
+    }
     break;
   }
 }
