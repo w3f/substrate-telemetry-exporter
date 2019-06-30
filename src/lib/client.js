@@ -2,7 +2,8 @@ const WebSocket = require('ws');
 const { timeToFinality,
         bestBlock,
         bestFinalized,
-        blockProductionTime
+        blockProductionTime,
+        blockPropagationTime
       } = require('./prometheus');
 
 const address = 'ws://localhost:8080';
@@ -30,6 +31,7 @@ const Actions = {
   AfgAuthoritySet      : 19
 };
 const state = {};
+const nodes = {};
 
 module.exports = {
   start: () => {
@@ -59,6 +61,7 @@ module.exports = {
 }
 
 function deserialize(data) {
+  console.log(data)
   const json = JSON.parse(data);
 
   const messages = new Array(json.length / 2);
@@ -84,6 +87,29 @@ function handle(message) {
     }
     break;
 
+  case Actions.AddedNode:
+    {
+      const nodeID = payload[0];
+      const nodeName = payload[1][0];
+
+      nodes[nodeID] = nodeName;
+      state[nodeID] = {};
+
+      console.log(`New node ${nodeName} (${nodeID})`);
+    }
+    break;
+
+  case Actions.RemovedNode:
+    {
+      const nodeID = payload[0];
+
+      delete statte[nodeID];
+      delete nodes[nodeID];
+
+      console.log(`Node departed ${nodeName} (${nodeID})`);
+    }
+    break;
+
   case Actions.BestBlock:
     {
       const blockNumber = payload[0];
@@ -92,10 +118,23 @@ function handle(message) {
       const productionTime = payload[2];
       blockProductionTime.set(productionTime);
 
-      const timestamp = payload[1];
-      state[blockNumber] = timestamp;
-
       console.log(`New best block ${blockNumber}`)
+    }
+    break;
+
+  case Actions.ImportedBlock:
+    {
+      const blockNumber = payload[1][0];
+      const nodeID = payload[0];
+      const node = nodes[nodeID];
+
+      const propagationTime = payload[1][2];
+      blockPropagationTime.set({ node }, propagationTime);
+
+      const timestamp = payload[1][3];
+      state[nodeID][blockNumber] = timestamp;
+
+      console.log(`Block ${blockNumber} imported at node ${nodeID}`);
     }
     break;
 
@@ -104,14 +143,16 @@ function handle(message) {
       const currentTimestamp = Date.now();
 
       const blockNumber = payload[1];
-      const productionTime = state[blockNumber];
+      const nodeID = payload[0];
+      const productionTime = state[nodeID][blockNumber];
 
       if (productionTime) {
-        const node = payload[0];
+        const node = nodes[nodeID];
         const finalityTime = currentTimestamp - productionTime;
         timeToFinality.observe({ node }, finalityTime);
-      }
 
+        delete state[nodeID][blockNumber];
+      }
       console.log(`New finalized block ${blockNumber}`)
     }
     break;
