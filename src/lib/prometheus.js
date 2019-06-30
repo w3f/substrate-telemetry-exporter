@@ -16,7 +16,8 @@ module.exports = {
 
   timeToFinality: new promClient.Summary({
     name: 'time_to_finality',
-    help: 'Time from block production to block finalized'
+    help: 'Time from block production to block finalized',
+    labels: ['node']
   }),
   bestBlock: new promClient.Gauge({
     name: 'best_block',
