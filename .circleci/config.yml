@@ -24,6 +24,16 @@ jobs:
           command: |
             /scripts/build-image.sh web3f/substrate-telemetry-exporter .
 
+  publishImage:
+    docker:
+      - image: web3f/ci-commons:v1.0.1
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          command: |
+            /scripts/publish-image.sh web3f/substrate-telemetry-exporter
+
 workflows:
   version: 2
   test-deploy:
@@ -35,8 +45,13 @@ workflows:
       - buildImage:
           filters:
             tags:
+              only: /.*/
+      - publishImage:
+          filters:
+            tags:
               only: /v[0-9]+(\.[0-9]+)*/
             branches:
               ignore: /.*/
           requires:
             - test
+            - buildImage
