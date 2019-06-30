@@ -17,28 +17,28 @@ module.exports = {
 
 
   timeToFinality: new promClient.Summary({
-    name: 'time_to_finality',
+    name: 'polkadot_time_to_finality',
     help: 'Time from block production to block finalized',
     labelNames: ['node']
   }),
 
   bestBlock: new promClient.Gauge({
-    name: 'best_block',
+    name: 'polkadot_best_block',
     help: 'Maximum height of the chain'
   }),
 
   bestFinalized: new promClient.Gauge({
-    name: 'best_finalized',
+    name: 'polkadot_best_finalized',
     help: 'Highest finalized block'
   }),
 
   blockProductionTime: new promClient.Gauge({
-    name: 'block_production_time',
+    name: 'polkadot_block_production_time',
     help: 'Time to produce a block as reported by telemetry'
   }),
 
   blockPropagationTime: new promClient.Gauge({
-    name: 'block_propagation_time',
+    name: 'polkadot_block_propagation_time',
     help: 'Time to receive a block as reported by telemetry',
     labelNames: ['node']
   }),
