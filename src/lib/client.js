@@ -77,15 +77,16 @@ function handle(message) {
 
   switch(action) {
   case Actions.AddedChain:
-    const chain = payload[0];
-    socket.send(`subscribe:${chain}`);
+    {
+      const chain = payload[0];
+      socket.send(`subscribe:${chain}`);
 
+      console.log(`Subscribed to chain '${chain}'`)
+    }
     break;
 
   case Actions.BestBlock:
     {
-      console.log('new best block')
-
       const blockNumber = payload[0];
       bestBlock.set(blockNumber);
 
@@ -94,22 +95,34 @@ function handle(message) {
 
       const timestamp = payload[1];
       state[blockNumber] = timestamp;
+
+      console.log(`New best block ${blockNumber}`)
+    }
+    break;
+
+  case Actions.FinalizedBlock:
+    {
+      const currentTimestamp = Date.now();
+
+      const blockNumber = payload[1];
+      const productionTime = state[blockNumber];
+
+      if (productionTime) {
+        const node = payload[0];
+        const finalityTime = currentTimestamp - productionTime;
+        timeToFinality.observe({ node }, finalityTime);
+      }
+
+      console.log(`New finalized block ${blockNumber}`)
     }
     break;
 
   case Actions.BestFinalized:
     {
-      const currentTimestamp = Date.now();
-      console.log('new finalized block');
-
       const blockNumber = payload[0];
       bestFinalized.set(blockNumber);
 
-      const productionTime = state[blockNumber];
-      if (productionTime) {
-        const finalityTime = currentTimestamp - productionTime;
-        timeToFinality.observe(finalityTime);
-      }
+      console.log(`New best finalized block ${blockNumber}`)
     }
     break;
   }
