@@ -61,7 +61,6 @@ module.exports = {
 }
 
 function deserialize(data) {
-  console.log(data)
   const json = JSON.parse(data);
 
   const messages = new Array(json.length / 2);
