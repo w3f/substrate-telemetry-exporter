@@ -102,8 +102,9 @@ function handle(message) {
   case Actions.RemovedNode:
     {
       const nodeID = payload[0];
+      const nodeName = nodes[nodeID];
 
-      delete statte[nodeID];
+      delete state[nodeID];
       delete nodes[nodeID];
 
       console.log(`Node departed ${nodeName} (${nodeID})`);
