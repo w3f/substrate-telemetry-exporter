@@ -7,6 +7,7 @@ module.exports = {
     console.log('Starting the collection of metrics, the metrics are available on /metrics');
     promClient.collectDefaultMetrics();
   },
+
   injectMetricsRoute: (app) => {
     app.get('/metrics', (req, res) => {
       res.set('Content-Type', register.contentType);
@@ -14,21 +15,31 @@ module.exports = {
     });
   },
 
+
   timeToFinality: new promClient.Summary({
     name: 'time_to_finality',
     help: 'Time from block production to block finalized',
-    labels: ['node']
+    labelNames: ['node']
   }),
+
   bestBlock: new promClient.Gauge({
     name: 'best_block',
     help: 'Maximum height of the chain'
   }),
+
   bestFinalized: new promClient.Gauge({
     name: 'best_finalized',
     help: 'Highest finalized block'
   }),
+
   blockProductionTime: new promClient.Gauge({
     name: 'block_production_time',
-    help: 'Average time to produce a block as reported by telemetry'
+    help: 'Time to produce a block as reported by telemetry'
+  }),
+
+  blockPropagationTime: new promClient.Gauge({
+    name: 'block_propagation_time',
+    help: 'Time to receive a block as reported by telemetry',
+    labelNames: ['node']
   }),
 }
