@@ -131,7 +131,7 @@ function handle(message) {
       const nodeID = payload[0];
       const node = nodes[nodeID];
 
-      const propagationTime = payload[1][2] / 1000;
+      const propagationTime = payload[1][4] / 1000;
       blockPropagationTime.set({ node }, propagationTime);
 
       console.log(`Block ${blockNumber} imported at node ${nodeID}`);
