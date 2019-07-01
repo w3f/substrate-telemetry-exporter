@@ -111,13 +111,14 @@ function handle(message) {
 
   case Actions.BestBlock:
     {
+      const timestamp = Date.now();
+
       const blockNumber = payload[0];
       bestBlock.set(blockNumber);
 
       const productionTime = payload[2] / 1000;
       blockProductionTime.set(productionTime);
 
-      const timestamp = payload[1];
       timestamps[blockNumber] = timestamp;
 
       console.log(`New best block ${blockNumber}`)
