@@ -17,7 +17,7 @@ module.exports = {
 
 
   timeToFinality: new promClient.Summary({
-    name: 'polkadot_time_to_finality',
+    name: 'polkadot_block_finality_seconds',
     help: 'Time from block production to block finalized',
     labelNames: ['node']
   }),
@@ -33,12 +33,12 @@ module.exports = {
   }),
 
   blockProductionTime: new promClient.Gauge({
-    name: 'polkadot_block_production_time',
+    name: 'polkadot_block_production_seconds',
     help: 'Time to produce a block as reported by telemetry'
   }),
 
   blockPropagationTime: new promClient.Gauge({
-    name: 'polkadot_block_propagation_time',
+    name: 'polkadot_block_propagation_seconds',
     help: 'Time to receive a block as reported by telemetry',
     labelNames: ['node']
   }),

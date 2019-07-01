@@ -115,7 +115,7 @@ function handle(message) {
       const blockNumber = payload[0];
       bestBlock.set(blockNumber);
 
-      const productionTime = payload[2];
+      const productionTime = payload[2] / 1000;
       blockProductionTime.set(productionTime);
 
       console.log(`New best block ${blockNumber}`)
@@ -128,7 +128,7 @@ function handle(message) {
       const nodeID = payload[0];
       const node = nodes[nodeID];
 
-      const propagationTime = payload[1][2];
+      const propagationTime = payload[1][2] / 1000;
       blockPropagationTime.set({ node }, propagationTime);
 
       const timestamp = payload[1][3];
@@ -148,7 +148,7 @@ function handle(message) {
 
       if (productionTime) {
         const node = nodes[nodeID];
-        const finalityTime = currentTimestamp - productionTime;
+        const finalityTime = (currentTimestamp - productionTime) / 1000;
         timeToFinality.observe({ node }, finalityTime);
 
         delete state[nodeID][blockNumber];
