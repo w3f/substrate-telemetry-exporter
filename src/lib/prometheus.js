@@ -16,7 +16,7 @@ module.exports = {
   },
 
 
-  timeToFinality: new promClient.Summary({
+  timeToFinality: new promClient.Histogram({
     name: 'polkadot_block_finality_seconds',
     help: 'Time from block production to block finalized',
     labelNames: ['node']

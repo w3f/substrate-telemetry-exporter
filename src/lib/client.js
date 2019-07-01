@@ -30,7 +30,7 @@ const Actions = {
   AfgReceivedPrecommit : 18,
   AfgAuthoritySet      : 19
 };
-const state = {};
+const timestamps = {};
 const nodes = {};
 
 module.exports = {
@@ -61,6 +61,7 @@ module.exports = {
 }
 
 function deserialize(data) {
+  console.log(`data: ${data}`)
   const json = JSON.parse(data);
 
   const messages = new Array(json.length / 2);
@@ -92,7 +93,6 @@ function handle(message) {
       const nodeName = payload[1][0];
 
       nodes[nodeID] = nodeName;
-      state[nodeID] = {};
 
       console.log(`New node ${nodeName} (${nodeID})`);
     }
@@ -103,7 +103,6 @@ function handle(message) {
       const nodeID = payload[0];
       const nodeName = nodes[nodeID];
 
-      delete state[nodeID];
       delete nodes[nodeID];
 
       console.log(`Node departed ${nodeName} (${nodeID})`);
@@ -118,6 +117,9 @@ function handle(message) {
       const productionTime = payload[2] / 1000;
       blockProductionTime.set(productionTime);
 
+      const timestamp = payload[1];
+      timestamps[blockNumber] = timestamp;
+
       console.log(`New best block ${blockNumber}`)
     }
     break;
@@ -131,36 +133,36 @@ function handle(message) {
       const propagationTime = payload[1][2] / 1000;
       blockPropagationTime.set({ node }, propagationTime);
 
-      const timestamp = payload[1][3];
-      state[nodeID][blockNumber] = timestamp;
-
       console.log(`Block ${blockNumber} imported at node ${nodeID}`);
     }
     break;
 
   case Actions.FinalizedBlock:
     {
-      const currentTimestamp = Date.now();
-
       const blockNumber = payload[1];
-      const nodeID = payload[0];
-      const productionTime = state[nodeID][blockNumber];
 
-      if (productionTime) {
-        const node = nodes[nodeID];
-        const finalityTime = (currentTimestamp - productionTime) / 1000;
-        timeToFinality.observe({ node }, finalityTime);
-
-        delete state[nodeID][blockNumber];
-      }
       console.log(`New finalized block ${blockNumber}`)
     }
     break;
 
   case Actions.BestFinalized:
     {
+      const currentTimestamp = Date.now();
+
       const blockNumber = payload[0];
       bestFinalized.set(blockNumber);
+
+      const productionTime = timestamps[blockNumber];
+
+      if (productionTime) {
+        const nodeID = payload[0];
+        const node = nodes[nodeID];
+        const finalityTime = (currentTimestamp - productionTime) / 1000;
+        console.log(`finality time: ${finalityTime}`)
+        timeToFinality.observe({ node }, finalityTime);
+
+        delete timestamps[blockNumber];
+      }
 
       console.log(`New best finalized block ${blockNumber}`)
     }
