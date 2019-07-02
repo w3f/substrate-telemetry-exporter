@@ -31,7 +31,7 @@ module.exports = {
     help: 'Highest finalized block'
   }),
 
-  blockProductionTime: new promClient.Hitogram({
+  blockProductionTime: new promClient.Histogram({
     name: 'polkadot_block_production_seconds',
     help: 'Time to produce a block as reported by telemetry'
   }),
