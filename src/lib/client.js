@@ -51,9 +51,10 @@ module.exports = {
       });
 
       socket.on('message', (data) => {
+        const currentTimestamp = Date.now();
         const messages = deserialize(data);
         messages.forEach((message) => {
-          handle(message);
+          handle(message, currentTimestamp);
         });
       });
     });
@@ -74,7 +75,7 @@ function deserialize(data) {
   return messages;
 }
 
-function handle(message) {
+function handle(message, currentTimestamp) {
   const { action, payload } = message;
 
   switch(action) {
@@ -111,15 +112,13 @@ function handle(message) {
 
   case Actions.BestBlock:
     {
-      const timestamp = Date.now();
-
       const blockNumber = payload[0];
       bestBlock.set(blockNumber);
 
       const productionTime = payload[2] / 1000;
       blockProductionTime.observe(productionTime);
 
-      timestamps[blockNumber] = timestamp;
+      timestamps[blockNumber] = currentTimestamp;
 
       console.log(`New best block ${blockNumber}`)
     }
@@ -148,16 +147,12 @@ function handle(message) {
 
   case Actions.BestFinalized:
     {
-      const currentTimestamp = Date.now();
-
       const blockNumber = payload[0];
       bestFinalized.set(blockNumber);
 
       const productionTime = timestamps[blockNumber];
 
       if (productionTime) {
-        const nodeID = payload[0];
-        const node = nodes[nodeID];
         const finalityTime = (currentTimestamp - productionTime) / 1000;
         console.log(`finality time: ${finalityTime}`)
         timeToFinality.observe(finalityTime);
