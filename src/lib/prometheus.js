@@ -18,8 +18,7 @@ module.exports = {
 
   timeToFinality: new promClient.Histogram({
     name: 'polkadot_block_finality_seconds',
-    help: 'Time from block production to block finalized',
-    labelNames: ['node']
+    help: 'Time from block production to block finalized'
   }),
 
   bestBlock: new promClient.Gauge({
@@ -32,12 +31,12 @@ module.exports = {
     help: 'Highest finalized block'
   }),
 
-  blockProductionTime: new promClient.Gauge({
+  blockProductionTime: new promClient.Hitogram({
     name: 'polkadot_block_production_seconds',
     help: 'Time to produce a block as reported by telemetry'
   }),
 
-  blockPropagationTime: new promClient.Gauge({
+  blockPropagationTime: new promClient.Histogram({
     name: 'polkadot_block_propagation_seconds',
     help: 'Time to receive a block as reported by telemetry',
     labelNames: ['node']

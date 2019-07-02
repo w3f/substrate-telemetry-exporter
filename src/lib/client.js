@@ -117,7 +117,7 @@ function handle(message) {
       bestBlock.set(blockNumber);
 
       const productionTime = payload[2] / 1000;
-      blockProductionTime.set(productionTime);
+      blockProductionTime.observe(productionTime);
 
       timestamps[blockNumber] = timestamp;
 
@@ -132,7 +132,7 @@ function handle(message) {
       const node = nodes[nodeID];
 
       const propagationTime = payload[1][4] / 1000;
-      blockPropagationTime.set({ node }, propagationTime);
+      blockPropagationTime.observe({ node }, propagationTime);
 
       console.log(`Block ${blockNumber} imported at node ${nodeID}`);
     }
@@ -160,7 +160,7 @@ function handle(message) {
         const node = nodes[nodeID];
         const finalityTime = (currentTimestamp - productionTime) / 1000;
         console.log(`finality time: ${finalityTime}`)
-        timeToFinality.observe({ node }, finalityTime);
+        timeToFinality.observe(finalityTime);
 
         delete timestamps[blockNumber];
       }
