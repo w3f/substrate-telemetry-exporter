@@ -85,7 +85,7 @@ function handle(message, currentTimestamp, cfg) {
 
       let shouldSubscribe = true;
 
-      if(cfg.subscribe && cfg.subscribe.length > 0 && !cfg.subscribe.includes(chain)) {
+      if(cfg.subscribe && cfg.subscribe.length > 0 && !cfg.subscribe.includes(chain.toLowerCase())) {
         shouldSubscribe = false;
       }
       if (shouldSubscribe) {
