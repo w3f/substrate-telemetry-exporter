@@ -2,7 +2,6 @@ const Backoff = require('backoff-promise');
 const express = require('express');
 const fs = require('fs-extra');
 const path = require('path');
-const process = require('process');
 const program = require('commander');
 
 const client = require('./lib/client');
