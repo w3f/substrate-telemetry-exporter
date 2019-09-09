@@ -34,7 +34,7 @@ const timestamps = {};
 const nodes = {};
 
 module.exports = {
-  start: () => {
+  start: (cfg = {}) => {
     return new Promise((resolve, reject) => {
       socket.on('open', () => {
         console.log(`Conected to substrate-telemetry on ${address}`);
@@ -54,7 +54,7 @@ module.exports = {
         const currentTimestamp = Date.now();
         const messages = deserialize(data);
         messages.forEach((message) => {
-          handle(message, currentTimestamp);
+          handle(message, currentTimestamp, cfg);
         });
       });
     });
@@ -75,16 +75,24 @@ function deserialize(data) {
   return messages;
 }
 
-function handle(message, currentTimestamp) {
+function handle(message, currentTimestamp, cfg) {
   const { action, payload } = message;
 
   switch(action) {
   case Actions.AddedChain:
     {
       const chain = payload[0];
-      socket.send(`subscribe:${chain}`);
 
-      console.log(`Subscribed to chain '${chain}'`)
+      let shouldSubscribe = true;
+
+      if(cfg.subscribe && cfg.subscribe.length > 0 && !cfg.subscribe.includes(chain)) {
+        shouldSubscribe = false;
+      }
+      if (shouldSubscribe) {
+        socket.send(`subscribe:${chain}`);
+
+        console.log(`Subscribed to chain '${chain}'`)
+      }
     }
     break;
 
