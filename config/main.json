@@ -2,6 +2,7 @@
   "subscribe": [
     "kusama",
     "ksmcc2",
-    "kusama cc2"
+    "kusama cc2",
+    "testnet4"
   ]
 }

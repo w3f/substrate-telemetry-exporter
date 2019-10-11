@@ -90,8 +90,10 @@ function handle(message, currentTimestamp, cfg) {
       }
       if (shouldSubscribe) {
         socket.send(`subscribe:${chain}`);
+        console.log(`Subscribed to chain '${chain}'`);
 
-        console.log(`Subscribed to chain '${chain}'`)
+        socket.send('send-finality:1');
+        console.log('Requested finality data');
       }
     }
     break;
@@ -171,5 +173,23 @@ function handle(message, currentTimestamp, cfg) {
       console.log(`New best finalized block ${blockNumber}`)
     }
     break;
+
+  case Actions.AfgReceivedPrevote:
+    {
+      console.log(`AfgReceivedPrevote`)
+    }
+    break;
+
+  case Actions.AfgReceivedPrecommit:
+    {
+      console.log(`AfgReceivedPrecommit`)
+    }
+    break;
+  case Actions.AfgFinalized:
+    {
+      console.log(`AfgFinalized`)
+    }
+    break;
   }
+
 }
