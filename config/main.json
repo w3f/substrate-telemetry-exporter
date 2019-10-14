@@ -4,5 +4,9 @@
     "ksmcc2",
     "kusama cc2",
     "kusama cc3"
-  ]
+  ],
+  "chainParams": {
+    "slotDuration": 6,
+    "validatorCount": 21
+  }
 }
