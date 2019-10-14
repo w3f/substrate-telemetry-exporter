@@ -3,7 +3,9 @@ const { timeToFinality,
         bestBlock,
         bestFinalized,
         blockProductionTime,
-        blockPropagationTime
+        blockPropagationTime,
+        validatorPrecommitReceived,
+        validatorPrevoteReceived,
       } = require('./prometheus');
 
 const address = 'ws://localhost:8080';
@@ -62,7 +64,7 @@ module.exports = {
 }
 
 function deserialize(data) {
-  console.log(`data: ${data}`)
+  //console.log(`data: ${data}`)
   const json = JSON.parse(data);
 
   const messages = new Array(json.length / 2);
@@ -176,13 +178,21 @@ function handle(message, currentTimestamp, cfg) {
 
   case Actions.AfgReceivedPrevote:
     {
-      console.log(`AfgReceivedPrevote`)
+      const address = payload[3];
+
+      console.log(`AfgReceivedPrevote from addr: ${address}`);
+
+      validatorPrevoteReceived.inc({ address });
     }
     break;
 
   case Actions.AfgReceivedPrecommit:
     {
-      console.log(`AfgReceivedPrecommit`)
+      const address = payload[3];
+
+      console.log(`AfgReceivedPrecommit from addr: ${address}`);
+
+      validatorPrecommitReceived.inc({ address });
     }
     break;
   }
