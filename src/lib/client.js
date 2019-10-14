@@ -185,11 +185,5 @@ function handle(message, currentTimestamp, cfg) {
       console.log(`AfgReceivedPrecommit`)
     }
     break;
-  case Actions.AfgFinalized:
-    {
-      console.log(`AfgFinalized`)
-    }
-    break;
   }
-
 }

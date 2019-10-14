@@ -41,4 +41,16 @@ module.exports = {
     help: 'Time to receive a block as reported by telemetry',
     labelNames: ['node']
   }),
+
+  validatorPrecommitReceived: new promClient.Counter({
+    name: 'polkadot_validator_precommit_received_total',
+    help: 'Precommits received from each validator',
+    labelNames: ['address']
+  }),
+
+  validatorPrevoteReceived: new promClient.Counter({
+    name: 'polkadot_validator_prevote_received_total',
+    help: 'Prevotes received from each validator',
+    labelNames: ['address']
+  }),
 }
