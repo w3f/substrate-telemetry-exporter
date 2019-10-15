@@ -85,10 +85,10 @@ function handle(message, currentTimestamp, cfg) {
     {
       const chain = payload[0];
 
-      let shouldSubscribe = true;
+      let shouldSubscribe = false;
 
-      if(cfg.subscribe && cfg.subscribe.chains.length > 0 && !cfg.subscribe.chains.includes(chain.toLowerCase())) {
-        shouldSubscribe = false;
+      if(cfg.subscribe && cfg.subscribe.chains.length > 0 && cfg.subscribe.chains.includes(chain.toLowerCase())) {
+        shouldSubscribe = true;
       }
       if (shouldSubscribe) {
         socket.send(`subscribe:${chain}`);
@@ -180,11 +180,11 @@ function handle(message, currentTimestamp, cfg) {
     {
       const voter = payload[3];
 
+      if(cfg.subscribe && cfg.subscribe.validators.length > 0 && cfg.subscribe.validators.includes(voter)) {
+        console.log(`AfgReceivedPrevote from voter: ${voter}`);
 
-
-      console.log(`AfgReceivedPrevote from voter: ${voter}`);
-
-      validatorPrevoteReceived.inc({ voter });
+        validatorPrevoteReceived.inc({ voter });
+      }
     }
     break;
 
@@ -192,9 +192,11 @@ function handle(message, currentTimestamp, cfg) {
     {
       const voter = payload[3];
 
-      console.log(`AfgReceivedPrecommit from voter: ${voter}`);
+      if(cfg.subscribe && cfg.subscribe.validators.length > 0 && cfg.subscribe.validators.includes(voter)) {
+        console.log(`AfgReceivedPrecommit from voter: ${voter}`);
 
-      validatorPrecommitReceived.inc({ voter });
+        validatorPrecommitReceived.inc({ voter });
+      }
     }
     break;
   }
