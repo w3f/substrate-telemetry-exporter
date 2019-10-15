@@ -3,6 +3,7 @@ const express = require('express');
 const fs = require('fs-extra');
 const path = require('path');
 const program = require('commander');
+const yaml = require('js-yaml');
 
 const client = require('./lib/client');
 const prometheus = require('./lib/prometheus');
@@ -12,7 +13,7 @@ const port = 3000;
 const backoff = new Backoff();
 
 program
-  .option('-c, --config [path]', 'Path to config file.', '../config/main.json');
+  .option('-c, --config [path]', 'Path to config file.', '../config/main.yaml');
 
 async function start(options={}) {
   prometheus.injectMetricsRoute(app);
@@ -30,7 +31,7 @@ async function start(options={}) {
 function  readJSON(filePath) {
   const rawContent = fs.readFileSync(path.resolve(__dirname, filePath));
 
-  return JSON.parse(rawContent);
+  return yaml.safeLoad(rawContent);
 }
 
 start(program);
