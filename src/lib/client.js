@@ -178,21 +178,23 @@ function handle(message, currentTimestamp, cfg) {
 
   case Actions.AfgReceivedPrevote:
     {
-      const address = payload[3];
+      const voter = payload[3];
 
-      console.log(`AfgReceivedPrevote from addr: ${address}`);
 
-      validatorPrevoteReceived.inc({ address });
+
+      console.log(`AfgReceivedPrevote from voter: ${voter}`);
+
+      validatorPrevoteReceived.inc({ voter });
     }
     break;
 
   case Actions.AfgReceivedPrecommit:
     {
-      const address = payload[3];
+      const voter = payload[3];
 
-      console.log(`AfgReceivedPrecommit from addr: ${address}`);
+      console.log(`AfgReceivedPrecommit from voter: ${voter}`);
 
-      validatorPrecommitReceived.inc({ address });
+      validatorPrecommitReceived.inc({ voter });
     }
     break;
   }
