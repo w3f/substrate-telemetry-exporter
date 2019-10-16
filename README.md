@@ -28,9 +28,13 @@ yarn
 
 ## Run
 
+With Forever:
+
 ```
 forever start -l /var/log/telemetry.exporter.log -a /usr/local/substrate-telemetry-exporter/src/index.js
 ```
+
+For production sites it's recommended that you configure it as a systemd service to automatically start at system bootup.
 
 ## Check logs
 
