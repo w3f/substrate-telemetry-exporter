@@ -75,7 +75,7 @@ Now we need to add our new data source at the end of the prometheus.yaml config 
         instance: 'your_substrate_node_name'
 ```
 
-Save and restart your prometheus server.
+Save and restart your prometheus server, open the web interface and now you are able to query the new node metrics.
 
 ![Prometheus Queries](static/img/Substrate_Monitoring_Prometheus_01.png)
 
