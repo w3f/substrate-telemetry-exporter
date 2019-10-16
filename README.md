@@ -67,12 +67,12 @@ We need polkadot node to send their metrics to local Substrate Telemetry server,
 Now we need to add our new data source at the end of the prometheus.yaml config file (in scrape_configs: section):
 
 ```
- - job_name: 'PolkadotKusamaNode'
+ - job_name: 'YourSubstrateNode'
     scrape_interval: 5s
     static_configs:
-    - targets: ['YOUR_POLKADOT_NODE_IP:3000']
+    - targets: ['YOUR_SUBSTRATE_NODE_IP:3000']
       labels:
-        instance: 'your_polkadot_kusama_node_name'
+        instance: 'your_substrate_node_name'
 ```
 
 Save and restart your prometheus server.
