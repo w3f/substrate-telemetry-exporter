@@ -2,7 +2,15 @@
 
 # Substrate Telemetry Exporter
 
+Substrate Telemetry Exporter allows you to expose Substrate node metrics collected by a [Substrate Telemetry](https://github.com/paritytech/substrate-telemetry) server to a[Prometheus](https://prometheus.io/)/[Grafana](https://grafana.com/) based monitoring system.
+
+Currently there is no way to get per node metrics from a Telemetry server, so hence the need of run a local Telemetry + Telemetry Exporter in each node you want to monitor. That setup allows you to fetch metrics from individual nodes in Prometheus. If it is your case you don't need to run the Telemetry frontend. You can especify severals telemetry servers in your susbtrate node start flags (i.e: one local telemetry and the public [Telemetry server](https://telemetry.polkadot.io))
+
+Above you can see a diagram of the components, ports and flows involved in a localhost telemetry + exporter escenario:
+
 ![substrate telemetry exporter diagram](static/img/Polkadot_Monitoring_with_Ports.svg)
+
+The substrate node will send their metrics to a local Substrate Telemetry server. Telemetry Exporter (also running locally) will connect to Telemetry server and expose node metrics to Prometheus. Prometheus will then scrape node metrics at a specified scrape interval. Finally you will be able to create graphs, alerts and dashboards based on that metrics in Grafana.
 
 ## Install
 
@@ -11,6 +19,11 @@ cd /usr/local/
 git clone https://github.com/w3f/substrate-telemetry-exporter
 cd substrate-telemetry-exporter
 yarn
+```
+
+## Run
+
+```
 forever start -l /var/log/telemetry.exporter.log -a /usr/local/substrate-telemetry-exporter/src/index.js
 ```
 
