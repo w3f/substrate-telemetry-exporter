@@ -12,7 +12,10 @@ Above you can see a diagram of the components, ports and flows involved in a loc
 
 ![substrate telemetry exporter diagram](static/img/Polkadot_Monitoring_with_Ports.svg)
 
-The substrate node will send their metrics to a local Substrate Telemetry server. Telemetry Exporter (also running locally) will connect to Telemetry server and expose node metrics to Prometheus. Prometheus will then scrape node metrics at a specified scrape interval. Finally you will be able to create graphs, alerts and dashboards based on that metrics in Grafana.
+* The substrate node will send their metrics to a local Substrate Telemetry server.
+* Telemetry Exporter (also running locally) will connect to Telemetry server and expose node metrics to Prometheus. 
+* Prometheus will then scrape node metrics at a specified scrape interval.
+* Finally you will be able to create graphs, alerts and dashboards based on that metrics in Grafana.
 
 ## Install
 
