@@ -10,9 +10,7 @@ If it is your case you don't need to run the Telemetry frontend. Note that you c
 
 Above you can see a diagram of the components, ports and flows involved in a localhost telemetry + exporter escenario:
 
-<p align="center">
 ![substrate telemetry exporter diagram](static/img/Polkadot_Monitoring_with_Ports.svg)
-</p>
 
 * The substrate node will send their metrics to a local Substrate Telemetry server.
 * Telemetry Exporter (also running locally) will connect to Telemetry server and expose node metrics to Prometheus. 
@@ -79,7 +77,6 @@ Now we need to add our new data source at the end of the prometheus.yaml config 
 
 Save and restart your prometheus server.
 
-<p align="center">
 ![Prometheus Queries](static/img/Substrate_Monitoring_Prometheus_01.png)
-</p>
+
 
