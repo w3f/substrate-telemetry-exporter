@@ -32,3 +32,28 @@ data: [10,1570565189417]
 ^C
 ```
 
+## Configure polkadot node
+
+We need polkadot node to send their metrics to local Substrate Telemetry server, so we must start the polkadot daemon with the flag `--telemetry-url` like:
+
+```
+/usr/local/polkadot/target/release/polkadot --telemetry-url ws://127.0.0.1:1024 ... rest of your flags
+```
+
+## Configure Prometheus
+
+Now we need to add our new data source at the end of the prometheus.yaml config file (in scrape_configs: section):
+
+```
+ - job_name: 'PolkadotKusamaNode'
+    scrape_interval: 5s
+    static_configs:
+    - targets: ['YOUR_POLKADOT_NODE_IP:3000']
+      labels:
+        instance: 'your_polkadot_kusama_node_name'
+```
+
+Save and restart your prometheus server.
+
+![Prometheus Queries](static/img/Substrate_Monitoring_Prometheus_01.png)
+
