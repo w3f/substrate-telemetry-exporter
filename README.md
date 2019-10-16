@@ -4,7 +4,9 @@
 
 Substrate Telemetry Exporter allows you to expose Substrate node metrics collected by a [Substrate Telemetry](https://github.com/paritytech/substrate-telemetry) server to a [Prometheus](https://prometheus.io/)/[Grafana](https://grafana.com/) based monitoring system.
 
-Currently there is no way to get per node metrics from a Telemetry server, so hence the need of run a local Telemetry + Telemetry Exporter in each node you want to monitor. That setup allows you to fetch metrics from individual nodes in Prometheus. If it is your case you don't need to run the Telemetry frontend. You can especify severals telemetry servers in your susbtrate node start flags (i.e: one local telemetry and the public [Telemetry server](https://telemetry.polkadot.io))
+Currently there is no way to get per node metrics from a Telemetry server, so hence the need of run a local Telemetry + Telemetry Exporter in each node you want to monitor. That setup allows you to fetch metrics from individual nodes in Prometheus.
+
+If it is your case you don't need to run the Telemetry frontend. Note that you can especify severals telemetry servers in your susbtrate node start flags (i.e: one local telemetry to get metrics and the public [Telemetry server](https://telemetry.polkadot.io))
 
 Above you can see a diagram of the components, ports and flows involved in a localhost telemetry + exporter escenario:
 
