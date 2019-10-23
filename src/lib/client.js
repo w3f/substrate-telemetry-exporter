@@ -198,7 +198,7 @@ function handle(message, currentTimestamp, cfg) {
     {
       const voter = payload[3];
 
-      if(cfg.subscribe && cfg.subscribe.validators.length > 0 && cfg.subscribe.validators.includes(voter)) {
+      if(isAfgVoterWatched(cfg, voter)) {
         console.log(`AfgReceivedPrevote from voter: ${voter}`);
 
         validatorPrevoteReceived.inc({ voter });
@@ -210,7 +210,7 @@ function handle(message, currentTimestamp, cfg) {
     {
       const voter = payload[3];
 
-      if(cfg.subscribe && cfg.subscribe.validators.length > 0 && cfg.subscribe.validators.includes(voter)) {
+      if(isAfgVoterWatched(cfg, voter)) {
         console.log(`AfgReceivedPrecommit from voter: ${voter}`);
 
         validatorPrecommitReceived.inc({ voter });
@@ -218,4 +218,8 @@ function handle(message, currentTimestamp, cfg) {
     }
     break;
   }
+}
+
+function isAfgVoterWatched(cfg, voter) {
+  return cfg.subscribe && cfg.subscribe.validators.length > 0 && cfg.subscribe.validators.includes(voter)
 }
