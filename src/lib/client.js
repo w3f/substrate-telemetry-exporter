@@ -6,6 +6,7 @@ const { timeToFinality,
         blockPropagationTime,
         validatorPrecommitReceived,
         validatorPrevoteReceived,
+        newBlockProduced,
       } = require('./prometheus');
 
 const address = 'ws://localhost:8080';
@@ -55,16 +56,19 @@ module.exports = {
       socket.on('message', (data) => {
         const currentTimestamp = Date.now();
         const messages = deserialize(data);
-        messages.forEach((message) => {
-          handle(message, currentTimestamp, cfg);
-        });
+        for (let count = 0; count < messages.length; count++) {
+          if (messages[count].action === Actions.BestBlock) {
+            messages[count].nextMessage = messages[count + 1];
+          }
+          handle(messages[count], currentTimestamp, cfg);
+        }
       });
     });
   }
 }
 
 function deserialize(data) {
-  //console.log(`data: ${data}`)
+  console.log(`data: ${data}`)
   const json = JSON.parse(data);
 
   const messages = new Array(json.length / 2);
@@ -78,7 +82,7 @@ function deserialize(data) {
 }
 
 function handle(message, currentTimestamp, cfg) {
-  const { action, payload } = message;
+  const { action, payload, nextMessage } = message;
 
   switch(action) {
   case Actions.AddedChain:
@@ -132,7 +136,21 @@ function handle(message, currentTimestamp, cfg) {
 
       timestamps[blockNumber] = currentTimestamp;
 
-      console.log(`New best block ${blockNumber}`)
+      console.log(`New best block ${blockNumber}`);
+
+      if (nextMessage &&
+          nextMessage.action === Actions.ImportedBlock) {
+        const nodeID = nextMessage.payload[0];
+        const producer = nodes[nodeID];
+
+        if(cfg.subscribe &&
+           cfg.subscribe.validators &&
+           cfg.subscribe.validators.babe.length > 0 &&
+           cfg.subscribe.validators.babe.includes(producer)) {
+
+          newBlockProduced.inc({ producer });
+        }
+      }
     }
     break;
 
