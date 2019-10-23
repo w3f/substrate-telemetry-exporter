@@ -91,7 +91,7 @@ function handle(message, currentTimestamp, cfg) {
 
       let shouldSubscribe = false;
 
-      if(cfg.subscribe && cfg.subscribe.chains.length > 0 && cfg.subscribe.chains.includes(chain.toLowerCase())) {
+      if(isChainWatched(cfg, chain)) {
         shouldSubscribe = true;
       }
       if (shouldSubscribe) {
@@ -143,11 +143,7 @@ function handle(message, currentTimestamp, cfg) {
         const nodeID = nextMessage.payload[0];
         const producer = nodes[nodeID];
 
-        if(cfg.subscribe &&
-           cfg.subscribe.validators &&
-           cfg.subscribe.validators.babe.length > 0 &&
-           cfg.subscribe.validators.babe.includes(producer)) {
-
+        if(isProducerWatched(cfg, producer)) {
           newBlockProduced.inc({ producer });
         }
       }
@@ -198,7 +194,7 @@ function handle(message, currentTimestamp, cfg) {
     {
       const voter = payload[3];
 
-      if(isAfgVoterWatched(cfg, voter)) {
+      if(isValidatorWatched(cfg, voter)) {
         console.log(`AfgReceivedPrevote from voter: ${voter}`);
 
         validatorPrevoteReceived.inc({ voter });
@@ -210,7 +206,7 @@ function handle(message, currentTimestamp, cfg) {
     {
       const voter = payload[3];
 
-      if(isAfgVoterWatched(cfg, voter)) {
+      if(isValidatorWatched(cfg, voter)) {
         console.log(`AfgReceivedPrecommit from voter: ${voter}`);
 
         validatorPrecommitReceived.inc({ voter });
@@ -220,6 +216,20 @@ function handle(message, currentTimestamp, cfg) {
   }
 }
 
-function isAfgVoterWatched(cfg, voter) {
-  return cfg.subscribe && cfg.subscribe.validators.length > 0 && cfg.subscribe.validators.includes(voter)
+function isChainWatched(cfg, chain) {
+  return cfg.subscribe &&
+    cfg.subscribe.chains.length > 0 &&
+    cfg.subscribe.chains.includes(chain.toLowerCase());
+}
+function isProducerWatched(cfg, producer) {
+  return cfg.subscribe &&
+    cfg.subscribe.producers &&
+    cfg.subscribe.producers.length > 0 &&
+    cfg.subscribe.producers.includes(producer);
+}
+function isValidatorWatched(cfg, voter) {
+  return cfg.subscribe &&
+    cfg.subscribe.validators &&
+    cfg.subscribe.validators.length > 0 &&
+    cfg.subscribe.validators.includes(voter);
 }
