@@ -68,7 +68,7 @@ module.exports = {
 }
 
 function deserialize(data) {
-  console.log(`data: ${data}`)
+  //console.log(`data: ${data}`)
   const json = JSON.parse(data);
 
   const messages = new Array(json.length / 2);
@@ -142,7 +142,8 @@ function handle(message, currentTimestamp, cfg) {
       const producer = nodes[nodeID];
       if (nextMessage &&
           isProducerWatched(cfg, nextMessage, producer)) {
-          newBlockProduced.inc({ producer });
+        console.log(`Detected block produced by ${producer}`)
+        newBlockProduced.inc({ producer });
       }
     }
     break;
