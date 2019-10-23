@@ -138,10 +138,11 @@ function handle(message, currentTimestamp, cfg) {
 
       console.log(`New best block ${blockNumber}`);
 
+      const nodeID = nextMessage.payload[0];
+      const producer = nodes[nodeID];
       if (nextMessage &&
-          isProducerWatched(cfg, nextMessage)) {
+          isProducerWatched(cfg, nextMessage, producer)) {
           newBlockProduced.inc({ producer });
-        }
       }
     }
     break;
@@ -217,7 +218,7 @@ function isChainWatched(cfg, chain) {
     cfg.subscribe.chains.length > 0 &&
     cfg.subscribe.chains.includes(chain.toLowerCase());
 }
-function isProducerWatched(cfg, nextMessage) {
+function isProducerWatched(cfg, nextMessage, producer) {
   if (nextMessage.action !== Actions.ImportedBlock) {
     return false;
   }
@@ -226,9 +227,6 @@ function isProducerWatched(cfg, nextMessage) {
   if (propagationTime !== 0){
     return false;
   }
-
-  const nodeID = nextMessage.payload[0];
-  const producer = nodes[nodeID];
 
   return cfg.subscribe &&
     cfg.subscribe.producers &&
