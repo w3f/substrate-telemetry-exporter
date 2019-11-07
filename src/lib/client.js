@@ -229,10 +229,18 @@ function isProducerWatched(cfg, nextMessage, producer) {
     return false;
   }
 
-  return cfg.subscribe &&
-    cfg.subscribe.producers &&
-    cfg.subscribe.producers.length > 0 &&
-    cfg.subscribe.producers.includes(producer);
+  if(!cfg.subscribe ||
+     !cfg.subscribe.producers ||
+     cfg.subscribe.producers.length == 0) {
+    return false;
+  }
+
+  cfg.subscribe.producers.forEach((watchedProducer) => {
+    if(producer.startsWith(watchedProducer)) {
+      return true;
+    }
+  });
+  return false;
 }
 function isValidatorWatched(cfg, voter) {
   return cfg.subscribe &&
