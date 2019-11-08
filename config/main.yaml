@@ -2,6 +2,7 @@ subscribe:
   chains:
   - kusama cc2
   validators:
-  - 5D5HUyyooRU3DQKKVXQgvzuMzwdJBks5kwZHvaMgoC6PWgsa
+  - name: node0
+    address: 5D5HUyyooRU3DQKKVXQgvzuMzwdJBks5kwZHvaMgoC6PWgsa
   producers:
   - node0
