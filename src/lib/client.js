@@ -190,24 +190,26 @@ function handle(message, currentTimestamp, cfg) {
 
   case Actions.AfgReceivedPrevote:
     {
-      const voter = payload[3];
+      const address = payload[3];
 
-      if(isValidatorWatched(cfg, voter)) {
-        console.log(`AfgReceivedPrevote from voter: ${voter}`);
+      const name = watchedValidatorName(cfg, address);
+      if(name) {
+        console.log(`AfgReceivedPrevote from validator ${name}, address: ${address}`);
 
-        validatorPrevoteReceived.inc({ voter });
+        validatorPrevoteReceived.inc({ address, name });
       }
     }
     break;
 
   case Actions.AfgReceivedPrecommit:
     {
-      const voter = payload[3];
+      const address = payload[3];
 
-      if(isValidatorWatched(cfg, voter)) {
-        console.log(`AfgReceivedPrecommit from voter: ${voter}`);
+      const name = watchedValidatorName(cfg, address);
+      if(name) {
+        console.log(`AfgReceivedPrecommit from validator ${name}, address: ${address}`);
 
-        validatorPrecommitReceived.inc({ voter });
+        validatorPrecommitReceived.inc({ address, name });
       }
     }
     break;
@@ -235,16 +237,26 @@ function isProducerWatched(cfg, nextMessage, producer) {
     return false;
   }
 
+  let output = false;
   cfg.subscribe.producers.forEach((watchedProducer) => {
     if(producer.startsWith(watchedProducer)) {
-      return true;
+      output = true;
     }
   });
-  return false;
+  return output;
 }
-function isValidatorWatched(cfg, voter) {
-  return cfg.subscribe &&
-    cfg.subscribe.validators &&
-    cfg.subscribe.validators.length > 0 &&
-    cfg.subscribe.validators.includes(voter);
+function watchedValidatorName(cfg, address) {
+  if(!cfg.subscribe ||
+    !cfg.subscribe.validators ||
+     cfg.subscribe.validators.length === 0) {
+    return "";
+  }
+  let name = "";
+  cfg.subscribe.validators.forEach((validator) => {
+    if(address === validator.address) {
+      name = validator.name;
+      return;
+    }
+  })
+  return name;
 }

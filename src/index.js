@@ -25,7 +25,7 @@ async function start(options={}) {
     return client.start(cfg);
   });
 
-  app.listen(port, () => console.log(`substrate-telemtry-exporter listening on port ${port}`))
+  app.listen(port, () => console.log(`substrate-telemetry-exporter listening on port ${port}`))
 }
 
 function  readJSON(filePath) {
