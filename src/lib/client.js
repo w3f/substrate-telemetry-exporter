@@ -237,12 +237,13 @@ function isProducerWatched(cfg, nextMessage, producer) {
     return false;
   }
 
+  let output = false;
   cfg.subscribe.producers.forEach((watchedProducer) => {
     if(producer.startsWith(watchedProducer)) {
-      return true;
+      output = true;
     }
   });
-  return false;
+  return output;
 }
 function watchedValidatorName(cfg, address) {
   if(!cfg.subscribe ||
@@ -250,10 +251,12 @@ function watchedValidatorName(cfg, address) {
      cfg.subscribe.validators.length === 0) {
     return "";
   }
+  let name = "";
   cfg.subscribe.validators.forEach((validator) => {
     if(address === validator.address) {
-      return validator.name;
+      name = validator.name;
+      return;
     }
   })
-  return "";
+  return name;
 }
