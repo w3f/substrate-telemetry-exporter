@@ -45,13 +45,13 @@ module.exports = {
   validatorPrecommitReceived: new promClient.Counter({
     name: 'polkadot_validator_precommit_received_total',
     help: 'Precommits received from each validator',
-    labelNames: ['voter']
+    labelNames: ['name', 'address']
   }),
 
   validatorPrevoteReceived: new promClient.Counter({
     name: 'polkadot_validator_prevote_received_total',
     help: 'Prevotes received from each validator',
-    labelNames: ['voter']
+    labelNames: ['name', 'address']
   }),
 
   newBlockProduced: new promClient.Counter({
