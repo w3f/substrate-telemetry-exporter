@@ -19,7 +19,7 @@ async function start(options={}) {
   prometheus.injectMetricsRoute(app);
   prometheus.startCollection();
 
-  const cfg = readJSON(options.config);
+  const cfg = readYAML(options.config);
 
   await backoff.run(() => {
     return client.start(cfg);
@@ -28,7 +28,7 @@ async function start(options={}) {
   app.listen(port, () => console.log(`substrate-telemetry-exporter listening on port ${port}`))
 }
 
-function  readJSON(filePath) {
+function  readYAML(filePath) {
   const rawContent = fs.readFileSync(path.resolve(__dirname, filePath));
 
   return yaml.safeLoad(rawContent);
