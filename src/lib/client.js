@@ -9,7 +9,7 @@ const { timeToFinality,
         newBlockProduced,
       } = require('./prometheus');
 
-const address = 'ws://localhost:8080';
+const address = 'ws://localhost:8000/feed';
 const socket = new WebSocket(address);
 const Actions = {
   FeedVersion      : 0,
