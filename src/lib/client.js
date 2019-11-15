@@ -11,7 +11,8 @@ const { timeToFinality,
         newBlockProduced,
       } = require('./prometheus');
 
-const address = 'ws://localhost:8080';
+const address = 'ws://localhost:8000/feed';
+const socket = new WebSocket(address);
 const Actions = {
   FeedVersion      : 0,
   BestBlock        : 1,
@@ -52,6 +53,13 @@ class Client {
     return new Promise((resolve, reject) => {
       this.socket.onopen = () => {
         console.log(`Conected to substrate-telemetry on ${address}`);
+        cfg.subscribe.chains.forEach((chain) => {
+          socket.send(`subscribe:${chain}`);
+          console.log(`Subscribed to chain '${chain}'`);
+
+          socket.send('send-finality:${chain}');
+          console.log('Requested finality data');
+        });
         resolve();
       };
 
@@ -95,25 +103,6 @@ class Client {
     const { action, payload, nextMessage } = message;
 
     switch(action) {
-    case Actions.AddedChain:
-      {
-        const chain = payload[0];
-
-        let shouldSubscribe = false;
-
-        if(this._isChainWatched(chain)) {
-          shouldSubscribe = true;
-        }
-        if (shouldSubscribe) {
-          this.socket.send(`subscribe:${chain}`);
-          console.log(`Subscribed to chain '${chain}'`);
-
-          this.socket.send('send-finality:1');
-          console.log('Requested finality data');
-        }
-      }
-      break;
-
     case Actions.AddedNode:
       {
         const nodeID = payload[0];
@@ -148,12 +137,13 @@ class Client {
 
         console.log(`New best block ${blockNumber}`);
 
-        const nodeID = nextMessage.payload[0];
-        const producer = this.nodes[nodeID];
-        if (nextMessage &&
-            this._isProducerWatched(nextMessage, producer)) {
-          console.log(`Detected block produced by ${producer}`)
-          newBlockProduced.inc({ producer });
+        if (nextMessage) {
+          const nodeID = nextMessage.payload[0];
+          const producer = nodes[nodeID];
+          if (this._isProducerWatched(nextMessage, producer)) {
+            console.log(`Detected block produced by ${producer}`)
+            newBlockProduced.inc({ producer });
+          }
         }
       }
       break;
@@ -224,12 +214,6 @@ class Client {
       }
       break;
     }
-  }
-
-  _isChainWatched(chain) {
-    return this.cfg.subscribe &&
-      this.cfg.subscribe.chains.length > 0 &&
-      this.cfg.subscribe.chains.includes(chain.toLowerCase());
   }
 
   _isProducerWatched(nextMessage, producer) {
