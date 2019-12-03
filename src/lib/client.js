@@ -61,7 +61,7 @@ class Client {
       };
 
       this.socket.onerror = (err) => {
-        console.log(`Could not connect to substrate-telemetry on ${address}: ${JSON.stringify(err)}`);
+        console.log(`Could not connect to substrate-telemetry on ${address}: ${err}`);
         reject();
       };
 
