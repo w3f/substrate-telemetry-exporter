@@ -13,7 +13,7 @@ Above you can see a diagram of the components, ports and flows involved in a loc
 ![substrate telemetry exporter diagram](static/img/Polkadot_Monitoring_with_Ports.svg)
 
 * The substrate node will send their metrics to a local Substrate Telemetry server.
-* Telemetry Exporter (also running locally) will connect to Telemetry server and expose node metrics to Prometheus. 
+* Telemetry Exporter (also running locally) will connect to Telemetry server and expose node metrics to Prometheus.
 * Prometheus will then scrape node metrics at a specified scrape interval.
 * Finally you will be able to create graphs, alerts and dashboards based on that metrics in Grafana.
 
@@ -79,4 +79,11 @@ Save and restart your prometheus server, open the web interface and now you are 
 
 ![Prometheus Queries](static/img/Substrate_Monitoring_Prometheus_01.png)
 
+## Note on substrate-telemetry
 
+substrate-telemetry's backend was recently rewritten in Rust. The process is
+still not finished, and some of the functionalities are still not present in
+the Rust version, specially the AFG message handling that the exporter requires
+to expose validator metrics. Until the migration process is finished we recommend
+using the previous substrate-telemetry typescript backend for connecting the
+exporter, it can be built from [this version](https://github.com/paritytech/substrate-telemetry/tree/31784131d607c6b009e2d7abcf1ed94b04830916).
