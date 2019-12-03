@@ -57,12 +57,12 @@ class Client {
 
       this.socket.onclose = () => {
         console.log(`Conection to substrate-telemetry on ${address} closed`);
-        return this.start();
+        reject();
       };
 
       this.socket.onerror = (err) => {
         console.log(`Could not connect to substrate-telemetry on ${address}: ${JSON.stringify(err)}`);
-        return this.start();
+        reject();
       };
 
       this.socket.onmessage = (data) => {
