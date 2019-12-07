@@ -53,7 +53,7 @@ class Client {
     return new Promise((resolve, reject) => {
       this.socket.onopen = () => {
         console.log(`Conected to substrate-telemetry on ${address}`);
-        cfg.subscribe.chains.forEach((chain) => {
+        this.cfg.subscribe.chains.forEach((chain) => {
           socket.send(`subscribe:${chain}`);
           console.log(`Subscribed to chain '${chain}'`);
 
@@ -139,7 +139,7 @@ class Client {
 
         if (nextMessage) {
           const nodeID = nextMessage.payload[0];
-          const producer = nodes[nodeID];
+          const producer = this.nodes[nodeID];
           if (this._isProducerWatched(nextMessage, producer)) {
             console.log(`Detected block produced by ${producer}`)
             newBlockProduced.inc({ producer });
