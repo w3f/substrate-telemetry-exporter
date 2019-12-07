@@ -12,7 +12,6 @@ const { timeToFinality,
       } = require('./prometheus');
 
 const address = 'ws://localhost:8000/feed';
-const socket = new WebSocket(address);
 const Actions = {
   FeedVersion      : 0,
   BestBlock        : 1,
@@ -54,10 +53,10 @@ class Client {
       this.socket.onopen = () => {
         console.log(`Conected to substrate-telemetry on ${address}`);
         this.cfg.subscribe.chains.forEach((chain) => {
-          socket.send(`subscribe:${chain}`);
+          this.socket.send(`subscribe:${chain}`);
           console.log(`Subscribed to chain '${chain}'`);
 
-          socket.send('send-finality:${chain}');
+          this.socket.send('send-finality:${chain}');
           console.log('Requested finality data');
         });
         resolve();
