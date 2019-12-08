@@ -56,7 +56,7 @@ class Client {
           this.socket.send(`subscribe:${chain}`);
           console.log(`Subscribed to chain '${chain}'`);
 
-          this.socket.send('send-finality:${chain}');
+          this.socket.send(`send-finality:${chain}`);
           console.log('Requested finality data');
         });
         resolve();
@@ -189,7 +189,7 @@ class Client {
 
     case Actions.AfgReceivedPrevote:
       {
-        const address = payload[3];
+        const address = this._extractAddressFromAfgPayload(payload);
 
         const name = this._watchedValidatorName(address);
         if(name) {
@@ -202,7 +202,7 @@ class Client {
 
     case Actions.AfgReceivedPrecommit:
       {
-        const address = payload[3];
+        const address = this._extractAddressFromAfgPayload(payload);
 
         const name = this._watchedValidatorName(address);
         if(name) {
@@ -248,12 +248,16 @@ class Client {
     }
     let name = "";
     this.cfg.subscribe.validators.forEach((validator) => {
-      if(address === validator.address) {
+      if(address === validator.address.toString()) {
         name = validator.name;
         return;
       }
     })
     return name;
+  }
+
+  _extractAddressFromAfgPayload(payload) {
+    return payload[3].replace(/"/g, '');
   }
 }
 
