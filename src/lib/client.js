@@ -248,7 +248,7 @@ class Client {
     }
     let name = "";
     this.cfg.subscribe.validators.forEach((validator) => {
-      if(address === validator.address.toString()) {
+      if(address === validator.address) {
         name = validator.name;
         return;
       }
