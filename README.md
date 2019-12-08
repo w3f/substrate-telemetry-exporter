@@ -78,12 +78,3 @@ Now we need to add our new data source at the end of the prometheus.yaml config 
 Save and restart your prometheus server, open the web interface and now you are able to query the new node metrics.
 
 ![Prometheus Queries](static/img/Substrate_Monitoring_Prometheus_01.png)
-
-## Note on substrate-telemetry
-
-substrate-telemetry's backend was recently rewritten in Rust. The process is
-still not finished, and some of the functionalities are still not present in
-the Rust version, specially the AFG message handling that the exporter requires
-to expose validator metrics. Until the migration process is finished we recommend
-using the previous substrate-telemetry typescript backend for connecting the
-exporter, it can be built from [this version](https://github.com/paritytech/substrate-telemetry/tree/31784131d607c6b009e2d7abcf1ed94b04830916).
