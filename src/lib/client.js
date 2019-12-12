@@ -53,11 +53,7 @@ class Client {
       this.socket.onopen = () => {
         console.log(`Conected to substrate-telemetry on ${address}`);
         this.cfg.subscribe.chains.forEach((chain) => {
-          this.socket.send(`subscribe:${chain}`);
-          console.log(`Subscribed to chain '${chain}'`);
-
-          this.socket.send(`send-finality:${chain}`);
-          console.log('Requested finality data');
+          this._subscribe(chain);
         });
         resolve();
       };
@@ -102,6 +98,13 @@ class Client {
     const { action, payload, nextMessage } = message;
 
     switch(action) {
+    case Actions.AddedChain:
+      {
+        const chain = payload[0];
+        this._subscribe(chain);
+      }
+      break;
+
     case Actions.AddedNode:
       {
         const nodeID = payload[0];
@@ -115,12 +118,12 @@ class Client {
 
     case Actions.RemovedNode:
       {
-        const nodeID = payload[0];
+        const nodeID = payload;
         const nodeName = this.nodes[nodeID];
 
         delete this.nodes[nodeID];
 
-        console.log(`Node departed ${nodeName} (${nodeID})`);
+        console.log(`Node '${nodeName}' departed`);
       }
       break;
 
@@ -258,6 +261,16 @@ class Client {
 
   _extractAddressFromAfgPayload(payload) {
     return payload[3].replace(/"/g, '');
+  }
+
+  _subscribe(chain) {
+    if(this.cfg.subscribe.chains.includes(chain)) {
+      this.socket.send(`subscribe:${chain}`);
+      console.log(`Subscribed to chain '${chain}'`);
+
+      this.socket.send(`send-finality:${chain}`);
+      console.log('Requested finality data');
+    }
   }
 }
 
