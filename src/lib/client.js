@@ -11,7 +11,6 @@ const { timeToFinality,
         newBlockProduced,
       } = require('./prometheus');
 
-const address = 'ws://localhost:8000/feed';
 const Actions = {
   FeedVersion      : 0,
   BestBlock        : 1,
@@ -35,15 +34,19 @@ const Actions = {
   AfgAuthoritySet      : 19
 };
 
+const DEFAULT_TELEMETRY_HOST = 'ws://localhost:8000/feed';
+
 class Client {
   constructor(cfg) {
     this.cfg = cfg;
+
     const options = {
       WebSocket: WS, // custom WebSocket constructor
       connectionTimeout: 1000,
       maxRetries: 10,
     };
-    this.socket = new ReconnectingWebSocket(address, [], options);
+    this.address = cfg.telemetry_host || DEFAULT_TELEMETRY_HOST;
+    this.socket = new ReconnectingWebSocket(this.address, [], options);
     this.timestamps = {};
     this.nodes = {};
   }
@@ -51,7 +54,7 @@ class Client {
   start() {
     return new Promise((resolve, reject) => {
       this.socket.onopen = () => {
-        console.log(`Conected to substrate-telemetry on ${address}`);
+        console.log(`Conected to substrate-telemetry on ${this.address}`);
         this.cfg.subscribe.chains.forEach((chain) => {
           this._subscribe(chain);
         });
@@ -59,12 +62,12 @@ class Client {
       };
 
       this.socket.onclose = () => {
-        console.log(`Conection to substrate-telemetry on ${address} closed`);
+        console.log(`Conection to substrate-telemetry on ${this.address} closed`);
         reject();
       };
 
       this.socket.onerror = (err) => {
-        console.log(`Could not connect to substrate-telemetry on ${address}: ${err}`);
+        console.log(`Could not connect to substrate-telemetry on ${this.address}: ${err}`);
         reject();
       };
 
@@ -75,6 +78,7 @@ class Client {
           if (messages[count].action === Actions.BestBlock) {
             messages[count].nextMessage = messages[count + 1];
           }
+
           this._handle(messages[count], currentTimestamp);
         }
       };

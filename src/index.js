@@ -20,7 +20,6 @@ async function start(options={}) {
 
   const cfg = readYAML(options.config);
   const client = new Client(cfg);
-
   await client.start();
 }
 
@@ -30,4 +29,5 @@ function  readYAML(filePath) {
   return yaml.safeLoad(rawContent);
 }
 
+program.parse(process.argv);
 start(program);
