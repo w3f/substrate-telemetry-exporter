@@ -203,8 +203,6 @@ class Client {
           console.log(`AfgReceivedPrevote from validator ${name}, address: ${address}`);
 
           validatorPrevoteReceived.inc({ address, name });
-        } else {
-          console.log(`AfgReceivedPrevote from non watched address: ${address}`);
         }
       }
       break;
@@ -218,8 +216,6 @@ class Client {
           console.log(`AfgReceivedPrecommit from validator ${name}, address: ${address}`);
 
           validatorPrecommitReceived.inc({ address, name });
-        } else {
-          console.log(`AfgReceivedPrecommit from non watched address: ${address}`);
         }
       }
       break;
