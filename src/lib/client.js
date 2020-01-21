@@ -7,8 +7,7 @@ const { timeToFinality,
         blockProductionTime,
         blockPropagationTime,
         validatorPrecommitReceived,
-        validatorPrevoteReceived,
-        newBlockProduced,
+        validatorPrevoteReceived
       } = require('./prometheus');
 
 const Actions = {
@@ -75,10 +74,6 @@ class Client {
         const currentTimestamp = Date.now();
         const messages = this._deserialize(data);
         for (let count = 0; count < messages.length; count++) {
-          if (messages[count].action === Actions.BestBlock) {
-            messages[count].nextMessage = messages[count + 1];
-          }
-
           this._handle(messages[count], currentTimestamp);
         }
       };
@@ -99,7 +94,7 @@ class Client {
   }
 
   _handle(message, currentTimestamp) {
-    const { action, payload, nextMessage } = message;
+    const { action, payload } = message;
 
     switch(action) {
     case Actions.AddedChain:
@@ -142,15 +137,6 @@ class Client {
         this.timestamps[blockNumber] = currentTimestamp;
 
         console.log(`New best block ${blockNumber}`);
-
-        if (nextMessage) {
-          const nodeID = nextMessage.payload[0];
-          const producer = this.nodes[nodeID];
-          if (this._isProducerWatched(nextMessage, producer)) {
-            console.log(`Detected block produced by ${producer}`)
-            newBlockProduced.inc({ producer });
-          }
-        }
       }
       break;
 
@@ -220,31 +206,6 @@ class Client {
       }
       break;
     }
-  }
-
-  _isProducerWatched(nextMessage, producer) {
-    if (nextMessage.action !== Actions.ImportedBlock) {
-      return false;
-    }
-
-    const propagationTime = nextMessage.payload[1][4];
-    if (propagationTime !== 0){
-      return false;
-    }
-
-    if(!this.cfg.subscribe ||
-       !this.cfg.subscribe.producers ||
-       this.cfg.subscribe.producers.length == 0) {
-      return false;
-    }
-
-    let output = false;
-    this.cfg.subscribe.producers.forEach((watchedProducer) => {
-      if(producer.startsWith(watchedProducer)) {
-        output = true;
-      }
-    });
-    return output;
   }
 
   _watchedValidatorName(address) {
