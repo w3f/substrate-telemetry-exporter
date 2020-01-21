@@ -7,8 +7,7 @@ const { timeToFinality,
         blockProductionTime,
         blockPropagationTime,
         validatorPrecommitReceived,
-        validatorPrevoteReceived,
-        newBlockProduced,
+        validatorPrevoteReceived
       } = require('./prometheus');
 
 const Actions = {
@@ -142,15 +141,6 @@ class Client {
         this.timestamps[blockNumber] = currentTimestamp;
 
         console.log(`New best block ${blockNumber}`);
-
-        if (nextMessage) {
-          const nodeID = nextMessage.payload[0];
-          const producer = this.nodes[nodeID];
-          if (this._isProducerWatched(nextMessage, producer)) {
-            console.log(`Detected block produced by ${producer}`)
-            newBlockProduced.inc({ producer });
-          }
-        }
       }
       break;
 
@@ -220,31 +210,6 @@ class Client {
       }
       break;
     }
-  }
-
-  _isProducerWatched(nextMessage, producer) {
-    if (nextMessage.action !== Actions.ImportedBlock) {
-      return false;
-    }
-
-    const propagationTime = nextMessage.payload[1][4];
-    if (propagationTime !== 0){
-      return false;
-    }
-
-    if(!this.cfg.subscribe ||
-       !this.cfg.subscribe.producers ||
-       this.cfg.subscribe.producers.length == 0) {
-      return false;
-    }
-
-    let output = false;
-    this.cfg.subscribe.producers.forEach((watchedProducer) => {
-      if(producer.startsWith(watchedProducer)) {
-        output = true;
-      }
-    });
-    return output;
   }
 
   _watchedValidatorName(address) {
