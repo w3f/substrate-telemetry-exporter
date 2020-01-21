@@ -74,10 +74,6 @@ class Client {
         const currentTimestamp = Date.now();
         const messages = this._deserialize(data);
         for (let count = 0; count < messages.length; count++) {
-          if (messages[count].action === Actions.BestBlock) {
-            messages[count].nextMessage = messages[count + 1];
-          }
-
           this._handle(messages[count], currentTimestamp);
         }
       };
@@ -98,7 +94,7 @@ class Client {
   }
 
   _handle(message, currentTimestamp) {
-    const { action, payload, nextMessage } = message;
+    const { action, payload } = message;
 
     switch(action) {
     case Actions.AddedChain:
