@@ -58,8 +58,8 @@ data: [10,1570565189417]
 
 We need polkadot node to send their metrics to local Substrate Telemetry server, so we must start the polkadot daemon with the flag `--telemetry-url` like:
 
-```
-/usr/local/polkadot/target/release/polkadot --telemetry-url ws://127.0.0.1:1024 ... rest of your flags
+```bash
+/usr/local/polkadot/target/release/polkadot --telemetry-url "ws://localhost:8000/submit 0" # ... and the rest of your flags
 ```
 
 ## Configure Prometheus
