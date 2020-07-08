@@ -5,9 +5,7 @@ const { timeToFinality,
         bestBlock,
         bestFinalized,
         blockProductionTime,
-        blockPropagationTime,
-        validatorPrecommitReceived,
-        validatorPrevoteReceived
+        blockPropagationTime
       } = require('./prometheus');
 
 const Actions = {
@@ -179,32 +177,6 @@ class Client {
         }
 
         console.log(`New best finalized block ${blockNumber}`)
-      }
-      break;
-
-    case Actions.AfgReceivedPrevote:
-      {
-        const address = this._extractAddressFromAfgPayload(payload);
-
-        const name = this._watchedValidatorName(address);
-        if(name) {
-          console.log(`AfgReceivedPrevote from validator ${name}, address: ${address}`);
-
-          validatorPrevoteReceived.inc({ address, name });
-        }
-      }
-      break;
-
-    case Actions.AfgReceivedPrecommit:
-      {
-        const address = this._extractAddressFromAfgPayload(payload);
-
-        const name = this._watchedValidatorName(address);
-        if(name) {
-          console.log(`AfgReceivedPrecommit from validator ${name}, address: ${address}`);
-
-          validatorPrecommitReceived.inc({ address, name });
-        }
       }
       break;
     }
