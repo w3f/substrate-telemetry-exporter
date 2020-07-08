@@ -129,12 +129,13 @@ class Client {
     case Actions.BestBlock:
       {
         const blockNumber = payload[0];
+
         bestBlock.set(blockNumber);
 
-        const productionTime = payload[2] / 1000;
+        const productionTime = payload[1];
         blockProductionTime.observe(productionTime);
 
-        this.timestamps[blockNumber] = currentTimestamp;
+        this.timestamps[blockNumber] = productionTime;
 
         console.log(`New best block ${blockNumber}`);
       }
@@ -148,7 +149,7 @@ class Client {
 
         const propagationTime = payload[1][4] / 1000;
         blockPropagationTime.observe({ node }, propagationTime);
-
+        console.log(`propagationTime at node ${nodeID} : ${propagationTime}`);
         console.log(`Block ${blockNumber} imported at node ${nodeID}`);
       }
       break;
@@ -164,13 +165,14 @@ class Client {
     case Actions.BestFinalized:
       {
         const blockNumber = payload[0];
+
         bestFinalized.set(blockNumber);
 
         const productionTime = this.timestamps[blockNumber];
 
         if (productionTime) {
           const finalityTime = (currentTimestamp - productionTime) / 1000;
-          console.log(`finality time: ${finalityTime}`)
+          console.log(`finality time for ${blockNumber}: ${finalityTime}`)
           timeToFinality.observe(finalityTime);
 
           delete this.timestamps[blockNumber];
