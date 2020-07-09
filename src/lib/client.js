@@ -5,9 +5,7 @@ const { timeToFinality,
         bestBlock,
         bestFinalized,
         blockProductionTime,
-        blockPropagationTime,
-        validatorPrecommitReceived,
-        validatorPrevoteReceived
+        blockPropagationTime
       } = require('./prometheus');
 
 const Actions = {
@@ -129,12 +127,13 @@ class Client {
     case Actions.BestBlock:
       {
         const blockNumber = payload[0];
+
         bestBlock.set(blockNumber);
 
-        const productionTime = payload[2] / 1000;
+        const productionTime = payload[1];
         blockProductionTime.observe(productionTime);
 
-        this.timestamps[blockNumber] = currentTimestamp;
+        this.timestamps[blockNumber] = productionTime;
 
         console.log(`New best block ${blockNumber}`);
       }
@@ -148,7 +147,7 @@ class Client {
 
         const propagationTime = payload[1][4] / 1000;
         blockPropagationTime.observe({ node }, propagationTime);
-
+        console.log(`propagationTime at node ${nodeID} : ${propagationTime}`);
         console.log(`Block ${blockNumber} imported at node ${nodeID}`);
       }
       break;
@@ -164,45 +163,20 @@ class Client {
     case Actions.BestFinalized:
       {
         const blockNumber = payload[0];
+
         bestFinalized.set(blockNumber);
 
         const productionTime = this.timestamps[blockNumber];
 
         if (productionTime) {
           const finalityTime = (currentTimestamp - productionTime) / 1000;
-          console.log(`finality time: ${finalityTime}`)
+          console.log(`finality time for ${blockNumber}: ${finalityTime}`)
           timeToFinality.observe(finalityTime);
 
           delete this.timestamps[blockNumber];
         }
 
         console.log(`New best finalized block ${blockNumber}`)
-      }
-      break;
-
-    case Actions.AfgReceivedPrevote:
-      {
-        const address = this._extractAddressFromAfgPayload(payload);
-
-        const name = this._watchedValidatorName(address);
-        if(name) {
-          console.log(`AfgReceivedPrevote from validator ${name}, address: ${address}`);
-
-          validatorPrevoteReceived.inc({ address, name });
-        }
-      }
-      break;
-
-    case Actions.AfgReceivedPrecommit:
-      {
-        const address = this._extractAddressFromAfgPayload(payload);
-
-        const name = this._watchedValidatorName(address);
-        if(name) {
-          console.log(`AfgReceivedPrecommit from validator ${name}, address: ${address}`);
-
-          validatorPrecommitReceived.inc({ address, name });
-        }
       }
       break;
     }
