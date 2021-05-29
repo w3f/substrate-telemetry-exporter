@@ -31,6 +31,6 @@
     "js-yaml": "^3.13.1",
     "prom-client": "^11.5.3",
     "reconnecting-websocket": "^4.2.0",
-    "ws": "^7.0.1"
+    "ws": "^7.4.6"
   }
 }
